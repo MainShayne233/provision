@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# shellcheck disable=2088
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+print=""
+if [ "$1" = "-" ]; then
+  print=1
+  shift
+fi
+
+shell="${1:-""}"
+if [ -z "$shell" ]; then
+  shell="$(basename "$SHELL")"
+fi
+
+resolve_link() {
+  $(type -p greadlink readlink | head -1) "$1"
+}
+
+abs_dirname() {
+  local cwd
+  cwd="$(pwd)"
+  local path="$1"
+
+  while [ -n "$path" ]; do
+    cd "${path%/*}"
+    local name="${path##*/}"
+    path="$(resolve_link "$name" || true)"
+  done
+
+  pwd
+  cd "$cwd"
+}
+
+root="$(abs_dirname "$0")/.."
+
+if [ -z "$print" ]; then
+  case "$shell" in
+    bash)
+      profile='~/.bash_profile'
+      ;;
+    zsh)
+      profile='~/.zshenv'
+      ;;
+    *)
+      profile='your profile'
+      ;;
+  esac
+
+  {
+    echo "# Load provision automatically by adding"
+    echo "# the following to ${profile}:"
+    echo
+    echo "eval \"\$(${_PROVISION_ROOT}/bin/provision init -)\""
+    echo
+  } >&2
+
+  exit 1
+fi
+
+echo "export PATH=\"\${PATH}:${_DOTFILES_ROOT}/bin\""
+
+case "$shell" in
+  bash | zsh)
+    echo "source \"$root/completions/provision.${shell}\""
+    ;;
+esac
+
+commands=($(provision commands --sh))
+IFS="|"
+cat <<EOS
+_provision_wrapper() {
+  local command="\$1"
+  if [ "\$#" -gt 0 ]; then
+    shift
+  fi
+
+  case "\$command" in
+  ${commands[*]})
+    eval \`provision "sh-\$command" "\$@"\`;;
+  *)
+    command provision "\$command" "\$@";;
+  esac
+}
+EOS
+
+# zsh can't pass argument with aliases, but bash can.
+# zsh can have functions with the name being only numbers, but bash can't.
+# fix both cases here by letting zsh have a function, and bash have its alias.
+case "$shell" in
+  bash)
+    echo "alias provision=_provision_wrapper"
+    ;;
+  zsh)
+    echo "provision=_provision_wrapper"
+    ;;
+esac

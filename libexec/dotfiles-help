@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+print_summaries() {
+  local commands=()
+  local summaries=()
+  local longest_command=0
+  local command
+
+  for command in $(provision-commands); do
+    local file
+    file="$(command_path "$command")"
+    if [[ -n "$file" ]]; then
+      if [ ! -h "$file" ]; then
+        local summary
+        summary="$(summary "$file")"
+        if [ -n "$summary" ]; then
+          commands["${#commands[@]}"]="$command"
+          summaries["${#summaries[@]}"]="$summary"
+
+          if [ "${#command}" -gt "$longest_command" ]; then
+            longest_command="${#command}"
+          fi
+        fi
+      fi
+
+    fi
+  done
+
+  local index
+  local columns
+  columns="$(tput cols)"
+  local summary_length=$((columns - longest_command - 5))
+
+  for ((index = 0; index < ${#commands[@]}; index++)); do
+    printf "   %-${longest_command}s  %s\n" "${commands[$index]}" \
+      "$(truncate "$summary_length" "${summaries[$index]}")"
+  done
+}
+
+print_help() {
+  local file="$1"
+  local usage
+  usage="$(usage "$file")"
+
+  if [ -n "$usage" ]; then
+    echo "$usage"
+
+    local help
+    help="$(help "$file")"
+    [ -n "$help" ] && echo && echo "$help"
+  else
+    echo "Sorry, this command isn't documented yet."
+  fi
+}
+
+command_path() {
+  command -v "provision-$command" || command -v "provision-sh-$command" || true
+}
+
+summary() {
+  sed -n "s/^# Summary: \(.*\)/\1/p" "$1"
+}
+
+usage() {
+  sed -n "s/^# \(Usage: .*\)/\1/p" "$1"
+}
+
+help() {
+  awk '/^[^#]/{p=0} /^# Help:/{p=1} p' "$1" | sed "s/^# Help: //;s/^# //;s/^#//"
+}
+
+truncate() {
+  local max_length="$1"
+  local string="$2"
+
+  if [ "${#string}" -gt "$max_length" ]; then
+    local length=$((max_length - 3))
+    echo "${string:0:$length}..."
+  else
+    echo "$string"
+  fi
+}
+
+main() {
+  local command="${1:-""}"
+  # Provide provision completions
+  if [ "$command" = "--complete" ]; then
+    exec "provision-commands"
+    exit
+  fi
+
+  case "$command" in
+    "") echo "Usage: provision <command> [<args>]
+
+Some useful provision commands are:
+$(print_summaries)
+
+See 'provision help <command>' for information on a specific command."
+      ;;
+    *)
+      file="$(command_path "$command")"
+
+      if [ -n "$file" ]; then
+        print_help "$file"
+      else
+        echo "provision: no such command \`$command'" >&2
+        exit 1
+      fi
+      ;;
+  esac
+}
+
+main "$@"

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Usage: provision commands
+# Summary: List all provision commands
+# Help: This command is mostly used for autocompletion in various shells, and for `provision help`.
+# Also, this command helps find commands that are named the same as potentially builtin shell commands (which, cd, etc)
+# shellcheck disable=2086
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+ARG="${1:-""}"
+
+if [ "$ARG" = "--complete" ]; then
+  echo --sh
+  echo --no-sh
+  exit
+fi
+
+sh=""
+nosh=""
+
+if [ "$ARG" = "--sh" ]; then
+  sh=1
+  shift
+elif [ "$ARG" = "--no-sh" ]; then
+  nosh=1
+  shift
+fi
+
+shopt -s nullglob
+
+{ for path in ${PATH//:/$'\n'}; do
+  for command in "${path}/provision-"*; do
+    command="${command##*provision-}"
+    if [ -n "$sh" ]; then
+      if [ ${command:0:3} = "sh-" ]; then
+        echo ${command##sh-}
+      fi
+    elif [ -n "$nosh" ]; then
+      if [ ${command:0:3} != "sh-" ]; then
+        echo ${command##sh-}
+      fi
+    else
+      echo ${command##sh-}
+    fi
+  done
+done
+} | sort | uniq
