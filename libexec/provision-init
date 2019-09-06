@@ -61,7 +61,7 @@ if [ -z "$print" ]; then
   exit 1
 fi
 
-echo "export PATH=\"\${PATH}:${_DOTFILES_ROOT}/bin\""
+echo "export PATH=\"\${PATH}:${_PROVISION_ROOT}/bin\""
 
 case "$shell" in
   bash | zsh)

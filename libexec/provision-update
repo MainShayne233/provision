@@ -9,7 +9,7 @@ load_commonsh
 main() {
   header "Pulling latest version of provision repo"
   (
-  cd $DOTFILES_DIR
+  cd $PROVISION_DIR
   git pull
   )
 }

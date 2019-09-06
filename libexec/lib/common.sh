@@ -4,6 +4,17 @@ set -CEeuo pipefail
 IFS=$'\n\t'
 shopt -s extdebug
 
+export LOCAL_BIN="/usr/local/bin"
+export OPT_DIR="$HOME/opt/"
+
+SCRIPT_PATH="$(dirname $(realpath $0))"
+
+export PACKAGES_DIR="$SCRIPT_PATH/../lib/packages"
+
+# if "${DEBUG:-false}" eq "true"; then
+#     set +x
+# fi
+
 if [[ $(uname) == "Darwin" ]]; then
   sedf() { command sed -l "$@"; }
 else
@@ -22,175 +33,76 @@ header() {
   echo "-----> $1"
 }
 
-value_for_index_and_query() {
-  local query=".[$1].$2"
-  local path=$(echo $INDEX_JSON_FILE | jq --raw-output $query)
-  echo $(eval "echo $path")
-}
-
-item_name_for_index() {
-  local query="name"
-  value_for_index_and_query $1 "$query"
-}
-
-system_path_for_index() {
-  local query="$SYSTEM.system_path"
-  value_for_index_and_query $1 "$query"
-}
-
-repo_path_for_index() {
-  local query="$SYSTEM.repo_path"
-  local rel_dir=$(value_for_index_and_query $1 "$query")
-  echo "$DOTFILES_DIR/$rel_dir"
-}
-
-there_is_system_configuration_for_index() {
-  local query="$SYSTEM | type"
-  if [[ $(value_for_index_and_query $1 $query) == 'object' ]]; then
-    echo 'true'
-  else
-    echo 'false'
-  fi
-}
-
-file_or_dir_exists() {
-  local path="$1"
-  if [[ -f $path || -d $path ]]; then
-    return 0
-  else
-    return 1
-  fi
-}
-
-BOTH_MATCH=0
-BOTH_EXIST=1
-SOURCE_EXISTS=2
-DESTINATION_EXISTS=3
-NEITHER_EXIST=4
-
-determine_path_case() {
-  set +e
-  local source_path="$1"
-  local destination_path="$2"
-  file_or_dir_exists $source_path
-  local source_exists=$(echo $?)
-  file_or_dir_exists $destination_path
-  local destination_exists=$(echo $?)
-
-  if [[ $source_exists -eq 0 && $destination_exists -eq 0 ]]; then
-    if diff $source_path $destination_path >/dev/null; then
-      return $BOTH_MATCH
-    else
-      return $BOTH_EXIST
+ensure_args() {
+    local expected="$1"
+    local actual="$2"
+    if [ "$expected" -ne "$actual" ]; then
+        echo "Expected $expected args, but got $actual"
+        exit 1
     fi
-    return $BOTH_EXIST
-  elif [[ $source_exists -eq 0 ]]; then
-    return $SOURCE_EXISTS
-  elif [[ $destination_exists -eq 0 ]]; then
-    return $DESTINATION_EXISTS
+}
+
+which_verify() {
+	local name="$1"
+
+  if ! type "$name" > /dev/null; then
+    exit 1
   else
-    return $NEITHER_EXIST
+    exit 0
   fi
+}
+
+ensure_installed() {
+  local name="$1"
+  local not_installed
+  set +e
+  bash  "$SCRIPT_PATH/$name" "verify"
+  not_installed="$?"
   set -e
+  if [ "$not_installed" -eq "1" ]; then
+    bash  "$SCRIPT_PATH/$name" "install"
+  fi
 }
 
-verbose_cp() {
-  local source="$1"
-  local destination="$2"
-  header "Copying $source to $destination"
-  mkdir -p $destination
-  rm -rf $destination
-  cp -r $source $destination
+wget_dpkg() {
+	local download_url="$1"
+	local file="$2"
+	wget -P /tmp "$download_url"
+	sudo dpkg -i "/tmp/$file"
 }
 
-verbose_rm() {
-  local source="$1"
-  header "Removing $source"
-  rm -rf $source
+apt_package() {
+	local action="$1"
+	local package_name="$2"
+	local command_name="${3:-$2}"
+
+	case "$action" in
+
+	"verify")
+		which_verify "$command_name"
+		;;
+
+	"install")
+		sudo apt install "$package_name"
+		;;
+
+	*)
+		echo "Bad action used for apt_package: $action"
+		exit 1
+		;;
+	esac
 }
 
-replace_in_repo() {
-  local name="$1"
-  local system_path="$2"
-  local repo_path="$3"
-  determine_path_case $system_path $repo_path
-  case $? in
-    $BOTH_MATCH)
-      header "MATCH - $name is up to date!"
-      ;;
-    $BOTH_EXIST)
-      header "DIFF - The version of $name differs on the system from the repo. Update the repo with current version? [y/n/diff]"
-      read -r
-      if [[ $REPLY =~ ^[Yy]$  ]]; then
-        verbose_rm $repo_path
-        verbose_cp $system_path $repo_path
-      elif [[ $REPLY =~ ^diff$ ]]; then
-        set +e
-	diff $repo_path $system_path
-	set -e
-	replace_in_repo $name $system_path $repo_path
-      fi
-      ;;
-    $SOURCE_EXISTS)
-      header "MISSING IN REPO - $name does not exist in the repo. Add $system_path to the repo? [y/n]"
-      read -r
-      if [[ $REPLY =~ ^[Yy]$  ]]; then
-         verbose_cp $system_path $repo_path
-      fi
-      ;;
-    $DESTINATION_EXISTS)
-      header "MISSING ON SYSTEM - $name does not exist in the on the system. Remove $name from repo too? [y/n]"
-      read -r
-      if [[ $REPLY =~ ^[Yy]$  ]]; then
-        verbose_rm $repo_path
-      fi
-      ;;
-    $NEITHER_EXIST)
-      header "ALL MISSING - $name does not exist on the system or in the repo. Skipping."
-      ;;
-    *)
-  esac
-}
-
-replace_on_system() {
-  local name="$1"
-  local system_path="$2"
-  local repo_path="$3"
-  determine_path_case $system_path $repo_path
-  case $? in
-    $BOTH_MATCH)
-      header "MATCH - $name is up to date!"
-      ;;
-    $BOTH_EXIST)
-      header "DIFF - The version of $name differs on the system from the repo. Update your system with the latest from the repo? [y/n/diff]"
-      read -r
-      if [[ $REPLY =~ ^[Yy]$  ]]; then
-        verbose_rm $system_path
-        verbose_cp $repo_path $system_path
-      elif [[ $REPLY =~ ^diff$ ]];then
-        set +e
-	diff $system_path $repo_path
-	set -e
-	replace_on_system $name $system_path $repo_path
-      fi
-      ;;
-    $SOURCE_EXISTS)
-      header "MISSING IN REPO - $name does not exist in the repo. Remove $name from the system as well? [y/n]"
-      read -r
-      if [[ $REPLY =~ ^[Yy]$  ]]; then
-         verbose_rm $system_path
-      fi
-      ;;
-    $DESTINATION_EXISTS)
-      header "MISSING ON SYSTEM - $name does not exist in the on the system. Copy $name onto the system? [y/n]"
-      read -r
-      if [[ $REPLY =~ ^[Yy]$  ]]; then
-        verbose_cp $repo_path $system_path
-      fi
-      ;;
-    $NEITHER_EXIST)
-      header "ALL MISSING - $name does not exist on the system or in the repo. Skipping."
-      ;;
-    *)
-  esac
+package_script() {
+    local package_name
+    local package_script
+    ensure_args "1" "$#"
+    package_name="$1"
+    package_script="$PACKAGES_DIR/$package_name"
+    if [[ -f "$package_script" ]]; then
+        echo "$package_script"
+    else
+        echo "No package script found for $package_name"
+        exit 1
+    fi
 }

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -CEeuo pipefail
+IFS=$'\n\t'
+shopt -s extdebug
+
+load_commonsh
+
+main() {
+    local action
+    local package_name
+    local script_path
+    ensure_args "2" "$#"
+    action="$1"
+    package_name="$2"
+    script_path=$(package_script "$package_name")
+    (
+        eval "$(cat $script_path)"
+        eval "$action"
+    )
+}
+
+main "$@"
