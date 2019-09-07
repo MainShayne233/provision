@@ -6,5 +6,5 @@ install() {
 }
 
 verify() {
-    which_verify "upgrade_oh_my_zsh"
+    cat "$BASHRC" | grep -q "oh-my-zsh"
 }
