@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo apt-get -y install build-essential autoconf m4 libncurses5-dev libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop default-jre default-jdk
+  asdf_install_latest "erlang" "https://github.com/asdf-vm/asdf-erlang.git"
+}
+
+verify() {
+  which_verify "erl"
+}

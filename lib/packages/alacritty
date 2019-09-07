@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+ERSION="v0.2.9"
+FILE="Alacritty-${VERSION}_amd64.deb"
+DOWNLOAD_URL="https://github.com/jwilm/alacritty/releases/download/$VERSION/$FILE"
+
+install() {
+	wget_dpkg "$DOWNLOAD_URL" "$FILE"
+}
+
+verify() {
+	which_verify "alacritty"
+}

@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC1117
-set -CEeuo pipefail
-IFS=$'\n\t'
-shopt -s extdebug
+
+bash_setup() {
+    set -CEeuo pipefail
+    IFS=$'\n\t'
+    shopt -s extdebug
+
+    if "${DEBUG:-false}" eq "true"; then
+        set -x
+    fi
+}
+
+bash_setup
 
 export LOCAL_BIN="/usr/local/bin"
 export OPT_DIR="$HOME/opt/"
-
 SCRIPT_PATH="$(dirname $(realpath $0))"
-
 export PACKAGES_DIR="$SCRIPT_PATH/../lib/packages"
-
-# if "${DEBUG:-false}" eq "true"; then
-#     set +x
-# fi
 
 if [[ $(uname) == "Darwin" ]]; then
   sedf() { command sed -l "$@"; }
@@ -45,23 +47,24 @@ ensure_args() {
 which_verify() {
 	local name="$1"
 
-  if ! type "$name" > /dev/null; then
-    exit 1
-  else
+  if command -v "$name" > /dev/null; then
     exit 0
+  else
+    exit 1
   fi
 }
 
 ensure_installed() {
-  local name="$1"
-  local not_installed
-  set +e
-  bash  "$SCRIPT_PATH/$name" "verify"
-  not_installed="$?"
-  set -e
-  if [ "$not_installed" -eq "1" ]; then
-    bash  "$SCRIPT_PATH/$name" "install"
-  fi
+    local package_name
+    local not_installed
+    package_name="$1"
+    set +e
+    provision verify "$package_name"
+    not_installed="$?"
+    set -e
+    if [ "$not_installed" -eq "1" ]; then
+      bash  "$SCRIPT_PATH/$name" "install"
+    fi
 }
 
 wget_dpkg() {
@@ -105,4 +108,19 @@ package_script() {
         echo "No package script found for $package_name"
         exit 1
     fi
+}
+
+asdf_install_latest() {
+    local package_name
+    local plugin_url
+    local version
+    ensure_installed "asdf"
+    package_name="$1"
+    plugin_url="$2"
+    set +e
+    asdf plugin-add "$package_name"  "$plugin_url"
+    set -e
+    version="${3:-$(asdf list-all "$package_name" | grep -v rc | tail -n 1)}"
+    asdf install "$package_name" $version
+    asdf global "$package_name" $version
 }
