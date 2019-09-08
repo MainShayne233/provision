@@ -2,4 +2,25 @@
 
 load_commonsh
 
-provision run verify "$@"
+main() {
+    local package_name
+    ensure_args "1" "$#"
+    package_name="$1"
+    if [ "$package_name" == "--all" ]; then
+        for file in $PACKAGES_DIR/*; do
+            package_name=$(basename "$file")
+            provision verify "$package_name"
+        done
+    else
+        if [ $(run_package_command "$package_name" "verify") == "success" ]; then
+            echo "$package_name is installed"
+            exit 0
+        else
+            error "$package_name is not installed"
+            exit 1
+        fi
+    fi
+}
+
+main "$@"
+

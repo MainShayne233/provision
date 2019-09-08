@@ -31,6 +31,10 @@ log() {
   echo "$@" | indent
 }
 
+error() {
+  echo "$@" 1>&2;
+}
+
 header() {
   echo "-----> $1"
 }
@@ -105,8 +109,31 @@ package_script() {
     if [[ -f "$package_script" ]]; then
         echo "$package_script"
     else
-        echo "No package script found for $package_name"
+        error "no package script for $package_name"
         exit 1
+    fi
+}
+
+run_package_command() {
+    local package_name
+    local command
+    local script_path
+    local result_code
+    ensure_args "2" "$#"
+    package_name="$1"
+    command="$2"
+    script_path=$(package_script "$package_name")
+    set +e
+    (
+        eval "$(cat $script_path)"
+        eval "$command"
+    )
+    result_code="$?"
+    set -e
+    if [ "$result_code" -eq "0" ]; then
+        echo "success"
+    else
+        echo "failure"
     fi
 }
 
