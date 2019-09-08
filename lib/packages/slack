@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  snap install "slack" --classic
+}
+
+verify() {
+  which_verify "slack"
+}
+

@@ -123,18 +123,11 @@ run_package_command() {
     package_name="$1"
     command="$2"
     script_path=$(package_script "$package_name")
-    set +e
     (
         eval "$(cat $script_path)"
         eval "$command"
     )
-    result_code="$?"
-    set -e
-    if [ "$result_code" -eq "0" ]; then
-        echo "success"
-    else
-        echo "failure"
-    fi
+    exit "$?"
 }
 
 asdf_install_latest() {

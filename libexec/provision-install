@@ -12,12 +12,12 @@ main() {
             provision install "$package_name"
         done
     else
-        if [ $(run_package_command "$package_name" "verify") == "success" ]; then
+        if (run_package_command "$package_name" "verify"); then
             echo "$package_name is already installed"
             exit 0
         else
             error "$package_name is not installed"
-            if [ $(run_package_command "$package_name" "install") == "success" ]; then
+            if (run_package_command "$package_name" "install"); then
                 echo "successfully installed $package_name"
             else
                 echo "failed to install $package_name"

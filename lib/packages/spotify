@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  snap install "spotify"
+}
+
+verify() {
+  which_verify "spotify"
+}
+

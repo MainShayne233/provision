@@ -12,7 +12,7 @@ main() {
             provision verify "$package_name"
         done
     else
-        if [ $(run_package_command "$package_name" "verify") == "success" ]; then
+        if (run_package_command "$package_name" "verify"); then
             echo "$package_name is installed"
             exit 0
         else

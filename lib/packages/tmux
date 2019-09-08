@@ -8,4 +8,3 @@ install() {
 verify() {
   which_verify "tmux"
 }
-
