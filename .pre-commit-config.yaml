@@ -1,0 +1,46 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    sha: v0.9.2
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+- repo: local
+  hooks:
+  - id: shfmt
+    name: 'Shell Auto Formatter'
+    entry: shfmt
+    language: system
+    types:
+      - shell
+    args:
+      [-i=2,-ci,-w]
+    files: libexec/.*$
+    exclude: libexec/pack-metrics-tags-to-csv
+    #- id: shellcheck
+    #  name: 'Shellcheck Linter'
+    #  entry: shellcheck
+    #  language: system
+    #  types:
+    #    - shell
+    #  args:
+    #    [--external-sources]
+    #  files: libexec/.*$
+    #- id: bash_strict_mode
+    #  name: 'Strict mode'
+    #  entry: scripts/bash_strict_mode
+    #  language: system
+    #  types:
+    #    - shell
+  # Broken but would like to get it working :).
+  # - id: ansible-vault
+  #   name: 'Verify encryption on vault files'
+  #   entry: libexec/pack-ansible-vault-is-encrypted
+  #   language: system
+  #   types:
+  #     - text
+  #   files: ^(config/secrets.env.vault|fake.vault)$
+  #   pass_filenames: true

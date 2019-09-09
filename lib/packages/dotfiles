@@ -2,7 +2,7 @@
 
 install() {
 	(
-    ensure_installed "jq"
+    provision install "jq"
 		cd "$HOME"
 		rm -rf "$HOME/dotfiles-manager"
 		git clone https://github.com/MainShayne233/dotfiles-manager

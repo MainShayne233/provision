@@ -5,8 +5,8 @@ load_commonsh
 main() {
   header "Pulling latest version of provision repo"
   (
-  cd $PROVISION_DIR
-  git pull
+    cd $PROVISION_DIR
+    git pull
   )
 }
 

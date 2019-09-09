@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+load_commonsh
+
+main() {
+  local package_name
+  local package_script
+  ensure_args "1" "$#"
+  package_name="$1"
+
+  if (package_script "$package_name" >/dev/null 2>&1); then
+    echo "a script already exists for $package_name"
+  else
+    package_script="$PACKAGES_DIR/$package_name"
+    cat >$package_script <<-EOM
+#!/usr/bin/env bash
+
+install() {
+  apt_package "install" "$package_name"
+}
+
+verify() {
+  which_verify "$package_name"
+}
+EOM
+
+    vim "$package_script"
+  fi
+}
+
+main "$@"

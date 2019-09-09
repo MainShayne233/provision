@@ -94,7 +94,8 @@ main() {
   fi
 
   case "$command" in
-    "") echo "Usage: provision <command> [<args>]
+    "")
+      echo "Usage: provision <command> [<args>]
 
 Some useful provision commands are:
 $(print_summaries)

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  cd $(mktemp -d); go mod init tmp; go get mvdan.cc/sh/cmd/shfmt
+}
+
+verify() {
+  which "shfmt"
+}
