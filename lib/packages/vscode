@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  snap install code --classic
+}
+
+verify() {
+  which_verify "code"
+}

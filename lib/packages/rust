@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  curl https://sh.rustup.rs -sSf | sh
+}
+
+verify() {
+  which_verify "rustc"
+}
