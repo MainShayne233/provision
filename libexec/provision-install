@@ -13,14 +13,15 @@ main() {
     done
   else
     if (run_package_command "$package_name" "verify"); then
-      echo "$package_name is already installed"
+
+      echo "$(padded_package_name "$package_name")already installed"
       exit 0
     else
       error "$package_name is not installed"
       if (run_package_command "$package_name" "install"); then
-        echo "successfully installed $package_name"
+        echo "$(padded_package_name "$package_name")was successfully installed"
       else
-        echo "failed to install $package_name"
+        echo "$(padded_package_name "$package_name")failed to install"
       fi
     fi
   fi

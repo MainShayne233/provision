@@ -23,6 +23,30 @@ else
   sedf() { command sed -u "$@"; }
 fi
 
+longest_package_name() {
+  local name
+  local length
+  local longest
+  longest="0"
+  for file in $PACKAGES_DIR/*; do
+    name="$(basename "$file")"
+    length="${#name}"
+    if [ "$length" -gt "$longest" ]; then
+      longest="$length"
+    fi
+  done
+  echo "$longest"
+}
+
+padded_package_name() {
+  local name
+  local padding
+  ensure_args "1" "$#"
+  name="$1"
+  padding=$(($(longest_package_name) + 1))
+  printf "%-${padding}s" "$name"
+}
+
 indent() {
   sedf "s/^/       /"
 }

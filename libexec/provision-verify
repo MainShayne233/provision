@@ -13,10 +13,10 @@ main() {
     done
   else
     if (run_package_command "$package_name" "verify"); then
-      echo "$package_name is installed"
+      echo "$(padded_package_name "$package_name")is installed"
       exit 0
     else
-      error "$package_name is not installed"
+      error "$(padded_package_name "$package_name")is not installed"
       exit 1
     fi
   fi
