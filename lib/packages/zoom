@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+install() {
+  apt_package install libgl1-mesa-glx
+  apt_package install libxcb-xtest0
+  wget_dpkg "https://zoom.us/client/latest/zoom_amd64.deb" "zoom_amd64.deb"
+}
+
+verify() {
+  which_verify "zoom"
+}
