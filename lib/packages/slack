@@ -7,4 +7,3 @@ install() {
 verify() {
   which_verify "slack"
 }
-
