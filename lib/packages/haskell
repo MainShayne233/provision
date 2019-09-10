@@ -6,5 +6,5 @@ install() {
 }
 
 verify() {
-  which_verify "haskell"
+  which_verify "ghci"
 }
