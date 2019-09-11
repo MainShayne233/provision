@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo apt install libappindicator1 libgconf-2-4
+  wget_dpkg "https://prerelease.keybase.io/keybase_amd64.deb" "keybase_amd64.deb"
+}
+
+verify() {
+  which_verify "keybase"
+}
