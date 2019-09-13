@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  asdf_install_latest "ruby" "https://github.com/asdf-vm/asdf-ruby.git"
+  gem install bundler
+}
+
+verify() {
+  which_verify "ruby"
+}

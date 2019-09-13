@@ -2,6 +2,17 @@
 
 load_commonsh
 
+do_install() {
+  local package_name
+  ensure_args "1" "$#"
+  package_name="$1"
+  if (run_package_command "$package_name" "install"); then
+    echo "$(padded_package_name "$package_name")was successfully installed"
+  else
+    echo "$(padded_package_name "$package_name")failed to install"
+  fi
+}
+
 main() {
   local package_name
   ensure_args "1" "$#"
@@ -15,14 +26,14 @@ main() {
     if (run_package_command "$package_name" "verify"); then
 
       echo "$(padded_package_name "$package_name")already installed"
-      exit 0
+      if "${FORCE:-false}" eq "true"; then
+        do_install "$package_name"
+      else
+        exit 0
+      fi
     else
       error "$package_name is not installed"
-      if (run_package_command "$package_name" "install"); then
-        echo "$(padded_package_name "$package_name")was successfully installed"
-      else
-        echo "$(padded_package_name "$package_name")failed to install"
-      fi
+      do_install "$package_name"
     fi
   fi
 }

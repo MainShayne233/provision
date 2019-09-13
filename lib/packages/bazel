@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo apt install pkg-config zip g++ zlib1g-dev unzip python3
+  (
+    cd /tmp
+    wget "https://github.com/bazelbuild/bazel/releases/download/0.29.1/bazel-0.29.1-installer-linux-x86_64.sh"
+    chmod +x "bazel-0.29.1-installer-linux-x86_64.sh"
+    ./bazel-0.29.1-installer-linux-x86_64.sh --user
+  )
+  apt_package "install" "bazel"
+}
+
+verify() {
+  which_verify "bazel"
+}
