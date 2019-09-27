@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo add-apt-repository ppa:peek-developers/stable
+  sudo apt update
+  sudo apt install peek
+}
+
+verify() {
+  which_verify "peek"
+}

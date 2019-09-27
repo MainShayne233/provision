@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  wget_dpkg "https://github.com/angryip/ipscan/releases/download/3.6.1/ipscan_3.6.1_amd64.deb" "ipscan_3.6.1_amd64.deb"
+}
+
+verify() {
+  which_verify "ipscan"
+}
