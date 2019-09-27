@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+load_commonsh
+
+main() {
+  (
+    cd "$PROVISION_REPO"
+    git add -A
+    git status
+    echo "Hit any key to publish these changes to the repo"
+    read -r
+    git commit -m 'Updating provisioned packages (automatic commit message)'
+    git push origin master
+  )
+}
+
+main "$@"

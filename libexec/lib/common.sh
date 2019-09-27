@@ -15,7 +15,8 @@ bash_setup
 export LOCAL_BIN="/usr/local/bin"
 export OPT_DIR="$HOME/opt/"
 SCRIPT_PATH="$(dirname $(realpath $0))"
-export PACKAGES_DIR="$SCRIPT_PATH/../lib/packages"
+export PROVISION_REPO="$SCRIPT_PATH/../"
+export PACKAGES_DIR="$PROVISION_REPO/lib/packages"
 
 if [[ $(uname) == "Darwin" ]]; then
   sedf() { command sed -l "$@"; }

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+load_commonsh
+
+main() {
+  local package_name
+  local package_script
+  ensure_args "1" "$#"
+  package_name="$1"
+
+  if (package_script "$package_name" >/dev/null 2>&1); then
+    package_script="$PACKAGES_DIR/$package_name"
+    vim "$package_script"
+  else
+    echo "there is no package for $package_name to edit"
+  fi
+}
+
+main "$@"
