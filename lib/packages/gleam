@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  provision install "asdf"
+  asdf_install_latest "gleam" "https://github.com/vic/asdf-gleam.git"
+}
+
+verify() {
+  which_verify "gleam"
+}
