@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install() {
-  snap install code --classic
+  sudo apt install code
 }
 
 verify() {

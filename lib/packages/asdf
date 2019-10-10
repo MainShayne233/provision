@@ -3,12 +3,18 @@
 VERSION="0.7.1"
 
 install() {
+  local BASHRC="${BASHRC:-$HOME/.bashrc}"
+  rm -rf "$HOME/.asdf"
   git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch "v$VERSION"
-  if grep -q asdf "$BASHRC"; then
-    echo "$BASHRC seems to already have asdf config"
+  if test -f "$BASHRC"; then
+    if grep -q asdf "$BASHRC"; then
+      echo "$BASHRC seems to already have asdf config"
+    else
+      echo -e '\n. $HOME/.asdf/asdf.sh' >> "$BASHRC"
+      echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> "$BASHRC"
+    fi
   else
-    echo -e '\n. $HOME/.asdf/asdf.sh' >> "$BASHRC"
-    echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> "$BASHRC"
+    echo "cannot find BASHRC, so not adding asdf init"
   fi
 }
 
