@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install() {
-  sudo snap install pre-commit --classic
+  curl https://pre-commit.com/install-local.py | python -
 }
 
 verify() {

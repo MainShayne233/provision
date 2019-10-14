@@ -155,7 +155,7 @@ asdf_install_latest() {
   set +e
   asdf plugin-add "$package_name" "$plugin_url"
   set -e
-  version="${3:-$(asdf list-all "$package_name" | grep -v rc | tail -n 1)}"
+  version="${3:-$(asdf list-all "$package_name" | grep '^[0-9]' | tail -n 1)}"
   asdf install "$package_name" $version
   asdf global "$package_name" $version
 }

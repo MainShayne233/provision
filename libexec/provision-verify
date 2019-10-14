@@ -9,7 +9,9 @@ main() {
   if [ "$package_name" == "--all" ]; then
     for file in $PACKAGES_DIR/*; do
       package_name=$(basename "$file")
+      set +e
       provision verify "$package_name"
+      set -e
     done
   else
     if (run_package_command "$package_name" "verify"); then
