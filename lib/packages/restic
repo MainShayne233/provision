@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  apt_package "install" "restic"
+}
+
+verify() {
+  which_verify "restic"
+}
