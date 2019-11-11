@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-install() {
-  curl https://relica.run | bash
-}
-
-verify() {
-  which_verify "relica"
-}
