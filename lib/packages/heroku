@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo snap install heroku --classic
+}
+
+verify() {
+  which_verify "heroku"
+}

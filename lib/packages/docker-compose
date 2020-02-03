@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+install() {
+  local bin_path="${OPT_DIR}/docker-compose"
+  sudo curl -L "https://github.com/docker/compose/releases/download/1.25.0/docker-compose-$(uname -s)-$(uname -m)" -o "$bin_path"
+  sudo chmod +x "$bin_path"
+}
+
+verify() {
+  which_verify "docker-compose"
+}
