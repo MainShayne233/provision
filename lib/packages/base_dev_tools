@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+install() {
+  case "$OS" in
+    "Ubuntu")
+      sudo apt install build-essential autoconf m4 libncurses5-dev libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop default-jre default-jdk
+      ;;
+    "Fedora")
+      sudo yum groupinstall "Development Tools" "Development Libraries"
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
+
+}
+
+verify() {
+  which_verify "autoconf"
+}

@@ -31,13 +31,13 @@ fi
 
 case "$OS" in
   "macOS")
-    sys_install() { brew install "$1"; }
+    sys_install() { brew install "$@"; }
     ;;
   "Ubuntu")
-    sys_install() { sudo apt install "$1"; }
+    sys_install() { sudo apt install "$@"; }
     ;;
   "Fedora")
-    sys_install() { sudo dnf install "$1"; }
+    sys_install() { sudo dnf install "$@"; }
     ;;
 esac
 
@@ -108,11 +108,26 @@ which_verify() {
   fi
 }
 
+pkg_install() {
+  case "$OS" in
+    "Ubuntu")
+      wget_dpkg "https://github.com/angryip/ipscan/releases/download/3.6.1/ipscan_3.6.1_amd64.deb" "ipscan_3.6.1_amd64.deb"
+      ;;
+    "Fedora")
+      sudo rpm -U "https://github.com/angryip/ipscan/releases/download/3.6.2/ipscan-3.6.2-1.x86_64.rpm"
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
+}
+
 wget_dpkg() {
   local download_url="$1"
   local file="$2"
-  wget -P /tmp "$download_url"
-  sudo dpkg -i "/tmp/$file"
+  wget -O /tmp/install.pkg "$download_url"
+  sudo dpkg -i "/tmp/install.pkg"
 }
 
 package_script() {

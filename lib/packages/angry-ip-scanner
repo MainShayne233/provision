@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 
 install() {
-  wget_dpkg "https://github.com/angryip/ipscan/releases/download/3.6.1/ipscan_3.6.1_amd64.deb" "ipscan_3.6.1_amd64.deb"
+  sys_install java-1.8.0-openjdk-devel
+  case "$OS" in
+    "Ubuntu")
+      pkg_install "https://github.com/angryip/ipscan/releases/download/3.6.1/ipscan_3.6.1_amd64.deb"
+      ;;
+    "Fedora")
+      pkg_install "https://github.com/angryip/ipscan/releases/download/3.6.2/ipscan-3.6.2-1.x86_64.rpm"
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
 }
 
 verify() {
