@@ -16,7 +16,7 @@ main() {
 #!/usr/bin/env bash
 
 install() {
-  apt_package "install" "$package_name"
+  sys_install "$package_name"
 }
 
 verify() {

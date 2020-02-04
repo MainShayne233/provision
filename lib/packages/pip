@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install() {
-  apt_package "install" "python-pip"
+  sys_install "python-pip"
 }
 
 verify() {

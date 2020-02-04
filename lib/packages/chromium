@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install() {
-  apt_package "install" "chromium-browser"
+  sys_install "chromium-browser"
 }
 
 verify() {

@@ -115,28 +115,6 @@ wget_dpkg() {
   sudo dpkg -i "/tmp/$file"
 }
 
-apt_package() {
-  local action="$1"
-  local package_name="$2"
-  local command_name="${3:-$2}"
-
-  case "$action" in
-
-    "verify")
-      which_verify "$command_name"
-      ;;
-
-    "install")
-      sudo apt install "$package_name"
-      ;;
-
-    *)
-      echo "Bad action used for apt_package: $action"
-      exit 1
-      ;;
-  esac
-}
-
 package_script() {
   local package_name
   local package_script

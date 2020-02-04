@@ -1,19 +1,31 @@
 #!/usr/bin/env bash
 
 install() {
-	sudo apt-get install build-essential
-	sudo apt-get build-dep emacs
-	rm -rf "$OPT_DIR/emacs"
-	(
-		cd "$OPT_DIR"
-		git clone https://github.com/emacs-mirror/emacs.git
-		cd emacs
-		./autogen.sh
-		./configure
-		make -j4
-		sudo make install
-		git clone https://github.com/syl20bnr/spacemacs $HOME/.emacs.d
-	)
+  rm -rf $HOME/.emacs.d
+  case "$OS" in
+    "Ubuntu")
+	    sudo apt-get install build-essential
+	    sudo apt-get build-dep emacs
+	    rm -rf "$OPT_DIR/emacs"
+	    (
+	    	cd "$OPT_DIR"
+	    	git clone https://github.com/emacs-mirror/emacs.git
+	    	cd emacs
+	    	./autogen.sh
+	    	./configure
+	    	make -j4
+	    	sudo make install
+	    )
+      ;;
+    "Fedora")
+      sys_install emacs
+      git clone https://github.com/syl20bnr/spacemacs $HOME/.emacs.d
+      ;;
+    *)
+      echo "No install procedure defined for OS."
+      exit 1
+      ;;
+  esac
 }
 
 verify() {

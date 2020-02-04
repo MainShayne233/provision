@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install() {
-  apt_package "install" "restic"
+  sys_install "restic"
 }
 
 verify() {
