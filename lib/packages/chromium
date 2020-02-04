@@ -1,7 +1,21 @@
 #!/usr/bin/env bash
 
+PKG_NAME=""
+case "$OS" in
+    "Ubuntu")
+      PKG_NAME="chromium-browser"
+      ;;
+    "Fedora")
+      PKG_NAME="chromium"
+      ;;
+    *)
+      error "OS not supported"
+      exit 1
+      ;;
+  esac
+
 install() {
-  sys_install "chromium-browser"
+  sys_install "$PKG_NAME"
 }
 
 verify() {

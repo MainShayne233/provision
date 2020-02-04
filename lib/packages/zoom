@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 
 install() {
-  sys_install libgl1-mesa-glx
-  sys_install libxcb-xtest0
-  wget_dpkg "https://zoom.us/client/latest/zoom_amd64.deb" "zoom_amd64.deb"
+  case "$OS" in
+    "Ubuntu")
+      sys_install libgl1-mesa-glx
+      sys_install libxcb-xtest0
+      pkg_install "https://zoom.us/client/latest/zoom_amd64.deb" "zoom_amd64.deb"
+      ;;
+    "Fedora")
+      pkg_install "https://d11yldzmag5yn.cloudfront.net/prod/3.5.352596.0119/zoom_x86_64.rpm"
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
 }
 
 verify() {

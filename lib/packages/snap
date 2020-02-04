@@ -3,12 +3,11 @@
 install() {
   case "$OS" in
     "Ubuntu")
-      sudo add-apt-repository ppa:gophers/archive
-      sudo apt-get update
-      sudo apt-get install golang-1.11-go
+      # should be installed by default
       ;;
     "Fedora")
-      sys_install golang
+      sys_install snapd
+      sudo ln -s /var/lib/snapd/snap /snap
       ;;
     *)
       echo "Not set up for current OS"
@@ -18,5 +17,5 @@ install() {
 }
 
 verify() {
-  which_verify "go"
+  which_verify "snap"
 }

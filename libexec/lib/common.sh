@@ -42,7 +42,10 @@ case "$OS" in
 esac
 
 export LOCAL_BIN="/usr/local/bin"
-export OPT_DIR="$HOME/opt/"
+export OPT_DIR="$HOME/opt"
+if [ ! -d "$OPT_DIR" ]; then
+  mkdir -p "$OPT_DIR"
+fi
 SCRIPT_PATH="$(dirname $(realpath $0))"
 export PROVISION_REPO="$SCRIPT_PATH/../"
 export PACKAGES_DIR="$PROVISION_REPO/lib/packages"
@@ -111,10 +114,10 @@ which_verify() {
 pkg_install() {
   case "$OS" in
     "Ubuntu")
-      wget_dpkg "https://github.com/angryip/ipscan/releases/download/3.6.1/ipscan_3.6.1_amd64.deb" "ipscan_3.6.1_amd64.deb"
+      wget_dpkg "$1"
       ;;
     "Fedora")
-      sudo rpm -U "https://github.com/angryip/ipscan/releases/download/3.6.2/ipscan-3.6.2-1.x86_64.rpm"
+      sudo rpm -U "$1"
       ;;
     *)
       echo "Not set up for current OS"
@@ -125,7 +128,6 @@ pkg_install() {
 
 wget_dpkg() {
   local download_url="$1"
-  local file="$2"
   wget -O /tmp/install.pkg "$download_url"
   sudo dpkg -i "/tmp/install.pkg"
 }

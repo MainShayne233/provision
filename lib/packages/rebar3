@@ -5,8 +5,7 @@ install() {
     cd /tmp
     wget https://s3.amazonaws.com/rebar3/rebar3
     chmod +x rebar3
-    mkdir "$HOME/opt"
-    mv rebar3 "$HOME/opt/"
+    mv rebar3 "$OPT_DIR/"
   )
 }
 

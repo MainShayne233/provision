@@ -1,7 +1,22 @@
 #!/usr/bin/env bash
 
 install() {
-  sudo apt install haskell-platform haskell-stack
+  sys_install haskell-platform
+  case "$OS" in
+    "Ubuntu")
+     sys_install haskell-stack
+      ;;
+    "Fedora")
+      sudo dnf copr enable petersen/stack
+      sys_install stack
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
+
+  stack upgrade
   stack install brittany
 }
 

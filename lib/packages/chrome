@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
 
-DOWNLOAD_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
-FILE="google-chrome-stable_current_amd64.deb"
-
 install() {
-	wget_dpkg "$DOWNLOAD_URL" "$FILE"
+  case "$OS" in
+    "Ubuntu")
+      pkg_install "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+      ;;
+    "Fedora")
+      sudo dnf install fedora-workstation-repositories
+      sudo dnf config-manager --set-enabled google-chrome
+      sudo dnf install google-chrome-stable
+      ;;
+    *)
+      error "OS not supported"
+      exit 1
+      ;;
+  esac
 }
 
 verify() {

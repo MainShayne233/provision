@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
 install() {
-  sudo add-apt-repository ppa:peek-developers/stable
-  sudo apt update
-  sudo apt install peek
+  case "$OS" in
+    "Ubuntu")
+      sudo add-apt-repository ppa:peek-developers/stable
+      sudo apt update
+      sudo apt install peek
+      ;;
+    "Fedora")
+      sys_install peek
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
+
 }
 
 verify() {

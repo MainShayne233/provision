@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 
 install() {
-  sudo apt install libappindicator1 libgconf-2-4
-  wget_dpkg "https://prerelease.keybase.io/keybase_amd64.deb" "keybase_amd64.deb"
+  case "$OS" in
+    "Ubuntu")
+      sys_install libappindicator1 libgconf-2-4
+      pkg_install "https://prerelease.keybase.io/keybase_amd64.deb"
+      ;;
+    "Fedora")
+      sudo yum install https://prerelease.keybase.io/keybase_amd64.rpm
+      run_keybase
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
 }
 
 verify() {

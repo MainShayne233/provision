@@ -1,7 +1,21 @@
 #!/usr/bin/env bash
 
 install() {
-  sudo apt install code
+  case "$OS" in
+    "Ubuntu")
+      sys_install code
+      ;;
+    "Fedora")
+      sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+      sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+      sudo dnf check-update
+      sys_install code
+      ;;
+    *)
+      echo "Not set up for current OS"
+      exit 1
+      ;;
+  esac
 }
 
 verify() {
