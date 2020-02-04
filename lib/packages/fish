@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
 install() {
-  sudo apt-add-repository ppa:fish-shell/release-3
-  sudo apt-get update
-  sudo apt-get install fish
+  case "$OS" in
+    "Ubuntu")
+      sudo apt-add-repository ppa:fish-shell/release-3
+      sudo apt-get update
+      sudo apt-get install fish
+      ;;
+    "Fedora")
+      sys_install "fish"
+      ;;
+    *)
+      error "No install procedure configured for OS"
+      exit 1
+      ;;
+  esac
+
   curl https://git.io/fisher --create-dirs -sLo ~/.config/fish/functions/fisher.fish
   chsh -s `which fish`
   provision install rust

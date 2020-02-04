@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 install() {
-  apt_package "install" "tmux"
+  sys_install "tmux"
+  rm -rf ~/.tmux/plugins/tpm
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 }
 

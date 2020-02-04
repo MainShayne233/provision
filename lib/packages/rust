@@ -3,6 +3,7 @@
 install() {
   curl https://sh.rustup.rs -sSf | sh
   rustup update
+  rustup toolchain install nightly
   rustup component add rustfmt
   rustup component add rust-src
   cargo +nightly install racer

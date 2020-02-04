@@ -12,6 +12,35 @@ bash_setup() {
 
 bash_setup
 
+error() {
+  echo "$@" 1>&2
+}
+
+export OS=""
+
+if [[ $(uname) == "Darwin" ]]; then
+  OS="macOS"
+elif [[ "$(awk -F= '/^NAME/{print $2}' /etc/os-release)" == "\"Ubuntu\"" ]]; then
+  OS="Ubuntu"
+elif [[ "$(awk -F= '/^NAME/{print $2}' /etc/os-release)" == "Fedora" ]]; then
+  OS="Fedora"
+else
+  error "Failed to determine the current operating system."
+  exit 1
+fi
+
+case "$OS" in
+  "macOS")
+    sys_install() { brew install "$1"; }
+    ;;
+  "Ubuntu")
+    sys_install() { sudo apt install "$1"; }
+    ;;
+  "Fedora")
+    sys_install() { sudo dnf install "$1"; }
+    ;;
+esac
+
 export LOCAL_BIN="/usr/local/bin"
 export OPT_DIR="$HOME/opt/"
 SCRIPT_PATH="$(dirname $(realpath $0))"
@@ -54,10 +83,6 @@ indent() {
 
 log() {
   echo "$@" | indent
-}
-
-error() {
-  echo "$@" 1>&2
 }
 
 header() {
