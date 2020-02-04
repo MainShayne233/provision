@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  sys_install "openssh-server"
+}
+
+verify() {
+  # weirdly have to get output from stderr
+  ssh -V 2>&1 | grep -q OpenSSH
+}
