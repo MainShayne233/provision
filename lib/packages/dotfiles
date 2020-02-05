@@ -5,7 +5,7 @@ install() {
     provision install "jq"
 		cd "$HOME"
 		rm -rf "$HOME/dotfiles-manager"
-		git clone https://github.com/MainShayne233/dotfiles-manager
+		git clone git@github.com:MainShayne233/dotfiles-manager
 		eval "$($HOME/dotfiles-manager/bin/dotfiles init -)"
 		dotfiles get
 	)
