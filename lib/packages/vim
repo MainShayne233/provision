@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 install() {
-	sudo apt-get install neovim
+	sys_install neovim
 	sudo ln -s $(which nvim) "$LOCAL_BIN/vim"
 }
 
