@@ -26,6 +26,10 @@ install() {
       exit 1
       ;;
   esac
+
+  provision install yarn
+  yarn global add tern
+  provision install fira-code-retina
 }
 
 verify() {

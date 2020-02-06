@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+install() {
+  case "$OS" in
+    "Fedora")
+      sudo dnf copr enable evana/fira-code-fonts
+      sys_install fira-code-fonts
+      ;;
+    *)
+      echo "No install procedure defined for OS."
+      exit 1
+      ;;
+  esac
+}
+
+verify() {
+  ls /usr/share/fonts/ | grep -q fira-code
+}
