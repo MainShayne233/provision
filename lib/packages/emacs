@@ -30,6 +30,8 @@ install() {
   provision install yarn
   yarn global add tern
   provision install fira-code-retina
+  sudo sh -c 'echo -e "#!/usr/bin/env bash\n\nemacsclient -nw \$@" > /usr/local/bin/e'
+  sudo chmod +x "/usr/local/bin/e"
 }
 
 verify() {

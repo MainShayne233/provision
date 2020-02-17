@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+install() {
+  provision install go
+  go get -u github.com/monochromegane/the_platinum_searcher/...
+}
+
+verify() {
+  which_verify "pt"
+}

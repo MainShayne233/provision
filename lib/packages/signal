@@ -1,9 +1,21 @@
 #!/usr/bin/env bash
 
 install() {
-  curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
-  echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" | sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
-  sudo apt update && sudo apt install signal-desktop
+  case "$OS" in
+    "Ubuntu")
+      curl -s https://updates.signal.org/desktop/apt/keys.asc | sudo apt-key add -
+      echo "deb [arch=amd64] https://updates.signal.org/desktop/apt xenial main" | sudo tee -a /etc/apt/sources.list.d/signal-xenial.list
+      sudo apt update && sudo apt install signal-desktop
+    "Fedora")
+      sudo snap install signal-desktop
+      ;;
+    *)
+      echo "No install procedure defined for OS."
+      exit 1
+      ;;
+  esac
+
+
 }
 
 verify() {

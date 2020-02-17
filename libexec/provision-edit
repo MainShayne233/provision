@@ -10,7 +10,7 @@ main() {
 
   if (package_script "$package_name" >/dev/null 2>&1); then
     package_script="$PACKAGES_DIR/$package_name"
-    vim "$package_script"
+    $EDITOR "$package_script"
   else
     echo "there is no package for $package_name to edit"
   fi
