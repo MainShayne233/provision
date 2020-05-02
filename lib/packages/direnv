@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  sys_install "direnv"
+}
+
+verify() {
+  which_verify "direnv"
+}

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+install() {
+  sys_install "exercism"
+}
+
+verify() {
+  which_verify "exercism"
+}

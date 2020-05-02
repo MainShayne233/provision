@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+TAR_PATH="$OPT_DIR/Postman.tar.gz"
+
+install() {
+  wget -O "$TAR_PATH" https://dl.pstmn.io/download/latest/linux64
+  tar -xvf "$TAR_PATH" -C "$OPT_DIR"
+  rm "$TAR_PATH"
+
+  sudo bash -c 'cat <<EOT >> "/usr/local/share/applications/postman.desktop"
+[Desktop Entry]
+Encoding=UTF-8
+Name=Postman
+Exec=/home/shayne/opt/Postman/app/Postman %U
+Icon=/home/shayne/opt/Postman/app/resources/app/assets/icon.png
+Terminal=false
+Type=Application
+Categories=Development;
+EOT'
+}
+
+verify() {
+  which_verify "postman"
+}

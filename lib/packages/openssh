@@ -2,6 +2,7 @@
 
 install() {
   sys_install "openssh-server"
+  sudo systemctl enable sshd.service
 }
 
 verify() {

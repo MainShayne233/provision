@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+install() {
+  case "$OS" in
+    "Ubuntu")
+      sudo apt install julia
+      ;;
+    "Fedora")
+      sudo dnf copr enable nalimilan/julia
+      sudo yum install julia
+      ;;
+    *)
+      echo "No install procedure defined for OS."
+      exit 1
+      ;;
+  esac
+}
+
+verify() {
+  which_verify "julia"
+}

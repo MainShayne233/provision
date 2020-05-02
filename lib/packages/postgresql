@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+install() {
+  sys_install postgresql-server postgresql-contrib
+  sudo systemctl enable postgresql
+  sudo postgresql-setup initdb
+  sudo systemctl start postgresql
+}
+
+verify() {
+  which_verify "psql"
+}

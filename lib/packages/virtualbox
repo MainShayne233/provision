@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+install() {
+  sudo wget http://download.virtualbox.org/virtualbox/rpm/fedora/virtualbox.repo -P /etc/yum.repos.d/
+  sudo dnf update
+  sudo dnf install @development-tools
+  sudo dnf install kernel-devel kernel-headers dkms qt5-qtx11extras  elfutils-libelf-devel zlib-devel
+  sudo dnf install VirtualBox-6.1
+  sudo usermod -a -G vboxusers "$(whoami)"
+}
+
+verify() {
+  which_verify "virtualbox"
+}

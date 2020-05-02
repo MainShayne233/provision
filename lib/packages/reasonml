@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+install() {
+  provision install yarn
+  yarn global add bs-platform
+  yarn global add reasoncli
+}
+
+verify() {
+  which_verify "bsb"
+}

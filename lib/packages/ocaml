@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+install() {
+  sh <(curl -sL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh)
+  opam init
+  eval `opam env`
+  opam switch create 4.10.0
+  eval `opam env`
+  opam install merlin
+}
+
+verify() {
+  which_verify "ocamlc"
+}
